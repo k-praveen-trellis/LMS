@@ -528,6 +528,7 @@ class Employee(models.Model):
     # region = models.CharField(_('Region'),help_text='what region of the country(Ghana) are you from ?',max_length=20,default=GREATER,choices=GHANA_REGIONS,blank=False,null=True)
     residence = models.CharField(_('Current Residence'),max_length=125,null=False,blank=False)
     address = models.CharField(_('Address'),help_text='address of current residence',max_length=125,null=True,blank=True)
+    last_login=models.DateTimeField(blank=True)
     
     education = models.CharField(_('Education'),help_text='highest educational standard ie. your last level of schooling',max_length=20,default=SENIORHIGH,choices=EDUCATIONAL_LEVEL,blank=False,null=True)
     lastwork = models.CharField(_('Last Place of Work'),help_text='where was the last place you worked ?',max_length=125,null=True,blank=True)

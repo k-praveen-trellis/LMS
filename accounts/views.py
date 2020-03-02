@@ -75,12 +75,12 @@ def login_(request):
         user = authenticate(request,username=username,password=password)
         if user is not None:
             login(request,user)
-            # employee = Employee.objects.filter(user = user)[0]
-            # new_user = employee.last_login is None
-            # if new_user:
-            #     return HttpResponseRedirect(reverse('admin:password_change'))
-            #     user.last_login = datetime.datetime.now()
-            #     user.save(update_fields=['last_login'])
+            employee = Employee.objects.filter(user = user)[0]
+            new_user = employee.last_login is None
+            if new_user:
+                user.last_login = datetime.datetime.now()
+                user.save(update_fields=['last_login'])
+                return HttpResponseRedirect(reverse('admin:password_change'))#Add a template to change password and set up url and views instead of this
             return redirect('dashboard')
         else:
             messages.info(request,message="Invalid credentials!")
