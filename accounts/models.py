@@ -13,17 +13,19 @@ from django.utils.translation import ugettext as _
 # Create your models here.
 SICK = 'sick'
 CASUAL = 'casual'
-EMERGENCY = 'emergency'
+PAID = 'paid'
 STUDY = 'study'
 
 LEAVE_TYPE = (
-(SICK,'Sick Leave'),
-(CASUAL,'Casual Leave'),
-(EMERGENCY,'Emergency Leave'),
-(STUDY,'Study Leave'),
+(SICK,'Sick_Leave'),
+(CASUAL,'Casual_Leave'),
+(PAID,'Paid_Leave'),
+(STUDY,'Study_Leave'),
 )
 
-DAYS = 21
+P_DAYS = 7
+C_DAYS = 7
+S_DAYS = 7
 
 
 class Leave(models.Model):
@@ -31,8 +33,10 @@ class Leave(models.Model):
 	startdate = models.DateField(verbose_name=_('Start Date'),null=True,blank=False)
 	enddate = models.DateField(verbose_name=_('End Date'),null=True,blank=False)
 	leavetype = models.CharField(choices=LEAVE_TYPE,max_length=25,default=SICK,null=True,blank=False)
-	reason = models.CharField(verbose_name=_('Reason for Leave'),max_length=255,help_text='add additional information for leave',null=True,blank=True)
-	defaultdays = models.PositiveIntegerField(verbose_name=_('Leave days per year counter'),default=DAYS,null=True,blank=True)
+	reason = models.CharField(verbose_name=_('Reason for Leave'),max_length=255,help_text='add additional information for leave',null=False,blank=False,default='Unspecified Reason')
+	paid_days = models.PositiveIntegerField(verbose_name=_('Paid Leave days per year counter'),default=P_DAYS,null=True,blank=True)
+	casual_days = models.PositiveIntegerField(verbose_name=_('Casual Leave days per year counter'),default=C_DAYS,null=True,blank=True)
+	sick_days = models.PositiveIntegerField(verbose_name=_('Sick Leave days per year counter'),default=S_DAYS,null=True,blank=True)
 
 
 	# hrcomments = models.ForeignKey('CommentLeave') #hide
@@ -178,7 +182,7 @@ class Department(models.Model):
         verbose_name = _('Department')
         verbose_name_plural = _('Departments')
         ordering = ['name','created']
-    
+
     def __str__(self):
         return self.name
 
@@ -212,7 +216,7 @@ class Religion(models.Model):
 
     created = models.DateTimeField(verbose_name=_('Created'),auto_now_add=True)
     updated = models.DateTimeField(verbose_name=_('Updated'),auto_now=True)
-    
+
     class Meta:
         verbose_name = _('Religion')
         verbose_name_plural = _('Religions')
@@ -224,185 +228,185 @@ class Religion(models.Model):
 
 
 
-# class Bank(models.Model):
-#     # access table: employee.bank_set.
-#     employee = models.ForeignKey('Employee',help_text='select employee(s) to add bank account',on_delete=models.CASCADE,null=True,blank=False)
-#     name = models.CharField(_('Name of Bank'),max_length=125,blank=False,null=True,help_text='')
-#     account = models.CharField(_('Account Number'),help_text='employee account number',max_length=30,blank=False,null=True)
-#     branch = models.CharField(_('Branch'),help_text='which branch was the account issue',max_length=125,blank=True,null=True)
-#     salary = models.DecimalField(_('Starting Salary'),help_text='This is the initial salary of employee',max_digits=16, decimal_places=2,null=True,blank=False)
+class Bank(models.Model):
+    # access table: employee.bank_set.
+    employee = models.ForeignKey('Employee',help_text='select employee(s) to add bank account',on_delete=models.CASCADE,null=True,blank=False)
+    name = models.CharField(_('Name of Bank'),max_length=125,blank=False,null=True,help_text='')
+    account = models.CharField(_('Account Number'),help_text='employee account number',max_length=30,blank=False,null=True)
+    branch = models.CharField(_('Branch'),help_text='which branch was the account issue',max_length=125,blank=True,null=True)
+    salary = models.DecimalField(_('Starting Salary'),help_text='This is the initial salary of employee',max_digits=16, decimal_places=2,null=True,blank=False)
 
-#     created = models.DateTimeField(verbose_name=_('Created'),auto_now_add=True,null=True)
-#     updated = models.DateTimeField(verbose_name=_('Updated'),auto_now=True,null=True)
-
-
-#     class Meta:
-#         verbose_name = _('Bank')
-#         verbose_name_plural = _('Banks')
-#         ordering = ['-name','-account']
+    created = models.DateTimeField(verbose_name=_('Created'),auto_now_add=True,null=True)
+    updated = models.DateTimeField(verbose_name=_('Updated'),auto_now=True,null=True)
 
 
-#     def __str__(self):
-#         return ('{0}'.format(self.name))
+    class Meta:
+        verbose_name = _('Bank')
+        verbose_name_plural = _('Banks')
+        ordering = ['-name','-account']
 
 
-
-
-
-
-# class Emergency(models.Model):
-#     FATHER = 'Father'
-#     MOTHER = 'Mother'
-#     SIS = 'Sister'
-#     BRO = 'Brother'
-#     UNCLE = 'Uncle'
-#     AUNTY = 'Aunty'
-#     HUSBAND = 'Husband'
-#     WIFE = 'Wife'
-#     FIANCE = 'Fiance'
-#     FIANCEE = 'Fiancee'
-#     COUSIN = 'Cousin'
-#     NIECE = 'Niece'
-#     NEPHEW = 'Nephew'
-#     SON = 'Son'
-#     DAUGHTER = 'Daughter'
-
-#     EMERGENCY_RELATIONSHIP = (
-#     (FATHER,'Father'),
-#     (MOTHER,'Mother'),
-#     (SIS,'Sister'),
-#     (BRO,'Brother'),
-#     (UNCLE,'Uncle'),
-#     (AUNTY,'Aunty'),
-#     (HUSBAND,'Husband'),
-#     (WIFE,'Wife'),
-#     (FIANCE,'Fiance'),
-#     (COUSIN,'Cousin'),
-#     (FIANCEE,'Fiancee'),
-#     (NIECE,'Niece'),
-#     (NEPHEW,'Nephew'),
-#     (SON,'Son'),
-#     (DAUGHTER,'Daughter'),
-#     )
-
-
-#     # access table: employee.emergency_set.
-#     employee = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True,blank=True)
-#     fullname = models.CharField(_('Fullname'),help_text='who should we contact ?',max_length=255,null=True,blank=False)
-#     tel = PhoneNumberField(default='+233240000000', null = False, blank=False, verbose_name='Phone Number (Example +233240000000)', help_text= 'Enter number with Country Code Eg. +233240000000')
-#     location = models.CharField(_('Place of Residence'),max_length= 125,null=True,blank=False)
-#     relationship = models.CharField(_('Relationship with Person'),help_text='Who is this person to you ?',max_length=8,default=FATHER,choices=EMERGENCY_RELATIONSHIP,blank=False,null=True)
-
-
-#     created = models.DateTimeField(verbose_name=_('Created'),auto_now_add=True)
-#     updated = models.DateTimeField(verbose_name=_('Updated'),auto_now=True)
-
-#     class Meta:
-#         verbose_name = 'Emergency'
-#         verbose_name_plural = 'Emergency'
-#         ordering = ['-created']
-
-
-#     def __str__(self):
-#         return self.fullname
-
-#     created = models.DateTimeField(verbose_name=_('Created'),auto_now_add=True,null=True)
-#     updated = models.DateTimeField(verbose_name=_('Updated'),auto_now=True,null=True)
+    def __str__(self):
+        return ('{0}'.format(self.name))
 
 
 
 
 
 
+class Emergency(models.Model):
+    FATHER = 'Father'
+    MOTHER = 'Mother'
+    SIS = 'Sister'
+    BRO = 'Brother'
+    UNCLE = 'Uncle'
+    AUNTY = 'Aunty'
+    HUSBAND = 'Husband'
+    WIFE = 'Wife'
+    FIANCE = 'Fiance'
+    FIANCEE = 'Fiancee'
+    COUSIN = 'Cousin'
+    NIECE = 'Niece'
+    NEPHEW = 'Nephew'
+    SON = 'Son'
+    DAUGHTER = 'Daughter'
+
+    EMERGENCY_RELATIONSHIP = (
+    (FATHER,'Father'),
+    (MOTHER,'Mother'),
+    (SIS,'Sister'),
+    (BRO,'Brother'),
+    (UNCLE,'Uncle'),
+    (AUNTY,'Aunty'),
+    (HUSBAND,'Husband'),
+    (WIFE,'Wife'),
+    (FIANCE,'Fiance'),
+    (COUSIN,'Cousin'),
+    (FIANCEE,'Fiancee'),
+    (NIECE,'Niece'),
+    (NEPHEW,'Nephew'),
+    (SON,'Son'),
+    (DAUGHTER,'Daughter'),
+    )
 
 
-# class Relationship(models.Model):
-#     MARRIED = 'Married'
-#     SINGLE = 'Single'
-#     DIVORCED = 'Divorced'
-#     WIDOW = 'Widow'
-#     WIDOWER = 'Widower'
+    # access table: employee.emergency_set.
+    employee = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True,blank=True)
+    fullname = models.CharField(_('Fullname'),help_text='who should we contact ?',max_length=255,null=True,blank=False)
+    tel = PhoneNumberField(default='+233240000000', null = False, blank=False, verbose_name='Phone Number (Example +233240000000)', help_text= 'Enter number with Country Code Eg. +233240000000')
+    location = models.CharField(_('Place of Residence'),max_length= 125,null=True,blank=False)
+    relationship = models.CharField(_('Relationship with Person'),help_text='Who is this person to you ?',max_length=8,default=FATHER,choices=EMERGENCY_RELATIONSHIP,blank=False,null=True)
 
-#     STATUS = (
-#     (MARRIED,'Married'),
-#     (SINGLE,'Single'),
-#     (DIVORCED,'Divorced'),
-#     (WIDOW,'Widow'),
-#     (WIDOWER,'Widower'),
-#     )
 
-#     FATHER = 'Father'
-#     MOTHER = 'Mother'
-#     SIS = 'Sister'
-#     BRO = 'Brother'
-#     UNCLE = 'Uncle'
-#     AUNTY = 'Aunty'
-#     HUSBAND = 'Husband'
-#     WIFE = 'Wife'
-#     FIANCE = 'Fiance'
-#     FIANCEE = 'Fiancee'
-#     COUSIN = 'Cousin'
-#     NIECE = 'Niece'
-#     NEPHEW = 'Nephew'
-#     SON = 'Son'
-#     DAUGHTER = 'Daughter'
+    created = models.DateTimeField(verbose_name=_('Created'),auto_now_add=True)
+    updated = models.DateTimeField(verbose_name=_('Updated'),auto_now=True)
 
-#     NEXTOFKIN_RELATIONSHIP = (
-#     (FATHER,'Father'),
-#     (MOTHER,'Mother'),
-#     (SIS,'Sister'),
-#     (BRO,'Brother'),
-#     (UNCLE,'Uncle'),
-#     (AUNTY,'Aunty'),
-#     (HUSBAND,'Husband'),
-#     (WIFE,'Wife'),
-#     (FIANCE,'Fiance'),
-#     (COUSIN,'Cousin'),
-#     (FIANCEE,'Fiancee'),
-#     (NIECE,'Niece'),
-#     (NEPHEW,'Nephew'),
-#     (SON,'Son'),
-#     (DAUGHTER,'Daughter'),
-#     )
+    class Meta:
+        verbose_name = 'Emergency'
+        verbose_name_plural = 'Emergency'
+        ordering = ['-created']
+
+
+    def __str__(self):
+        return self.fullname
+
+    created = models.DateTimeField(verbose_name=_('Created'),auto_now_add=True,null=True)
+    updated = models.DateTimeField(verbose_name=_('Updated'),auto_now=True,null=True)
 
 
 
 
-#     # access table: employee.relationship_set.or related_name = 'relation' employee.relation.***
-#     employee = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True,blank=True)
-#     status = models.CharField(_('Marital Status'),max_length=10,default=SINGLE,choices=STATUS,blank=False,null=True)
-#     spouse = models.CharField(_('Spouse (Fullname)'),max_length=255,blank=True,null=True)
-#     occupation = models.CharField(_('Occupation'),max_length=125,help_text='spouse occupation',blank=True,null=True)
-#     tel = PhoneNumberField(default=None, null = True, blank=True, verbose_name='Spouse Phone Number (Example +233240000000)', help_text= 'Enter number with Country Code Eg. +233240000000')
-#     children = models.PositiveIntegerField(_('Number of Children'),null=True,blank=True,default=0)
-
-#     #recently added - 29/03/19
-#     nextofkin = models.CharField(_('Next of Kin'),max_length=255,blank=False,null=True,help_text='fullname of next of kin')
-#     contact = PhoneNumberField(verbose_name='Next of Kin Phone Number (Example +233240000000)',null=True,blank=True,help_text='Phone Number of Next of Kin')
-#     relationship = models.CharField(_('Relationship with Next of Person'),help_text='Who is this person to you ?',max_length=15,choices=NEXTOFKIN_RELATIONSHIP,blank=False,null=True)
-    
-#     # close recent
-
-#     father = models.CharField(_('Father\'s Name'),max_length=255,blank=True,null=True)
-#     foccupation = models.CharField(_('Father\'s Occupation'),max_length=125,help_text='',blank=True,null=True)
-
-#     mother = models.CharField(_('Mother\'s Name'),max_length=255,blank=True,null=True)
-#     moccupation = models.CharField(_('Mother\'s Occupation'),max_length=125,help_text='',blank=True,null=True)
 
 
-#     created = models.DateTimeField(verbose_name=_('Created'),auto_now_add=True,null=True)
-#     updated = models.DateTimeField(verbose_name=_('Updated'),auto_now=True,null=True)
-
-#     class Meta:
-#         verbose_name = 'Relationship'
-#         verbose_name_plural = 'Relationships'
-#         ordering = ['created']
 
 
-#     def __str__(self):
-#         if self.status == 'Married':
-#             return self.spouse
-#         return self.status
+class Relationship(models.Model):
+    MARRIED = 'Married'
+    SINGLE = 'Single'
+    DIVORCED = 'Divorced'
+    WIDOW = 'Widow'
+    WIDOWER = 'Widower'
+
+    STATUS = (
+    (MARRIED,'Married'),
+    (SINGLE,'Single'),
+    (DIVORCED,'Divorced'),
+    (WIDOW,'Widow'),
+    (WIDOWER,'Widower'),
+    )
+
+    FATHER = 'Father'
+    MOTHER = 'Mother'
+    SIS = 'Sister'
+    BRO = 'Brother'
+    UNCLE = 'Uncle'
+    AUNTY = 'Aunty'
+    HUSBAND = 'Husband'
+    WIFE = 'Wife'
+    FIANCE = 'Fiance'
+    FIANCEE = 'Fiancee'
+    COUSIN = 'Cousin'
+    NIECE = 'Niece'
+    NEPHEW = 'Nephew'
+    SON = 'Son'
+    DAUGHTER = 'Daughter'
+
+    NEXTOFKIN_RELATIONSHIP = (
+    (FATHER,'Father'),
+    (MOTHER,'Mother'),
+    (SIS,'Sister'),
+    (BRO,'Brother'),
+    (UNCLE,'Uncle'),
+    (AUNTY,'Aunty'),
+    (HUSBAND,'Husband'),
+    (WIFE,'Wife'),
+    (FIANCE,'Fiance'),
+    (COUSIN,'Cousin'),
+    (FIANCEE,'Fiancee'),
+    (NIECE,'Niece'),
+    (NEPHEW,'Nephew'),
+    (SON,'Son'),
+    (DAUGHTER,'Daughter'),
+    )
+
+
+
+
+    # access table: employee.relationship_set.or related_name = 'relation' employee.relation.***
+    employee = models.ForeignKey('Employee',on_delete=models.CASCADE,null=True,blank=True)
+    status = models.CharField(_('Marital Status'),max_length=10,default=SINGLE,choices=STATUS,blank=False,null=True)
+    spouse = models.CharField(_('Spouse (Fullname)'),max_length=255,blank=True,null=True)
+    occupation = models.CharField(_('Occupation'),max_length=125,help_text='spouse occupation',blank=True,null=True)
+    tel = PhoneNumberField(default=None, null = True, blank=True, verbose_name='Spouse Phone Number (Example +233240000000)', help_text= 'Enter number with Country Code Eg. +233240000000')
+    children = models.PositiveIntegerField(_('Number of Children'),null=True,blank=True,default=0)
+
+    #recently added - 29/03/19
+    nextofkin = models.CharField(_('Next of Kin'),max_length=255,blank=False,null=True,help_text='fullname of next of kin')
+    contact = PhoneNumberField(verbose_name='Next of Kin Phone Number (Example +233240000000)',null=True,blank=True,help_text='Phone Number of Next of Kin')
+    relationship = models.CharField(_('Relationship with Next of Person'),help_text='Who is this person to you ?',max_length=15,choices=NEXTOFKIN_RELATIONSHIP,blank=False,null=True)
+
+    # close recent
+
+    father = models.CharField(_('Father\'s Name'),max_length=255,blank=True,null=True)
+    foccupation = models.CharField(_('Father\'s Occupation'),max_length=125,help_text='',blank=True,null=True)
+
+    mother = models.CharField(_('Mother\'s Name'),max_length=255,blank=True,null=True)
+    moccupation = models.CharField(_('Mother\'s Occupation'),max_length=125,help_text='',blank=True,null=True)
+
+
+    created = models.DateTimeField(verbose_name=_('Created'),auto_now_add=True,null=True)
+    updated = models.DateTimeField(verbose_name=_('Updated'),auto_now=True,null=True)
+
+    class Meta:
+        verbose_name = 'Relationship'
+        verbose_name_plural = 'Relationships'
+        ordering = ['created']
+
+
+    def __str__(self):
+        if self.status == 'Married':
+            return self.spouse
+        return self.status
 
 
 
@@ -470,42 +474,42 @@ class Employee(models.Model):
     )
 
 
-    # AHAFO = 'Ahafo'
-    # ASHANTI = 'Ashanti'
-    # BONOEAST = 'Bono East'
-    # BONO = 'Bono'
-    # CENTRAL = 'Central'
-    # EASTERN = 'Eastern'
-    # GREATER = 'Greater Accra'
-    # NORTHEAST = 'North East'
-    # NORTHERN = 'Northen'
-    # OTI = 'Oti'
-    # SAVANNAH = 'Savannah'
-    # UPPEREAST = 'Upper East'
-    # UPPERWEST = 'Upper West'
-    # VOLTA = 'Volta'
-    # WESTERNNORTH = 'Western North'
-    # WESTERN = 'Western'
+    AHAFO = 'Ahafo'
+    ASHANTI = 'Ashanti'
+    BONOEAST = 'Bono East'
+    BONO = 'Bono'
+    CENTRAL = 'Central'
+    EASTERN = 'Eastern'
+    GREATER = 'Greater Accra'
+    NORTHEAST = 'North East'
+    NORTHERN = 'Northen'
+    OTI = 'Oti'
+    SAVANNAH = 'Savannah'
+    UPPEREAST = 'Upper East'
+    UPPERWEST = 'Upper West'
+    VOLTA = 'Volta'
+    WESTERNNORTH = 'Western North'
+    WESTERN = 'Western'
 
 
-    # GHANA_REGIONS = (
-    # (AHAFO,'Ahafo'),
-    # (ASHANTI,'Ashanti'),
-    # (BONOEAST,'Bono East'),
-    # (BONO,'Bono'),
-    # (CENTRAL,'Central'),
-    # (EASTERN,'Eastern'),
-    # (GREATER,'Greater Accra'),
-    # (NORTHEAST,'Northen East'),
-    # (NORTHERN,'Northen'),
-    # (OTI,'Oti'),
-    # (SAVANNAH,'Savannah'),
-    # (UPPEREAST,'Upper East'),
-    # (UPPERWEST,'Upper West'),
-    # (VOLTA,'Volta'),
-    # (WESTERNNORTH,'Western North'),
-    # (WESTERN,'Western'),
-    # )
+    GHANA_REGIONS = (
+    (AHAFO,'Ahafo'),
+    (ASHANTI,'Ashanti'),
+    (BONOEAST,'Bono East'),
+    (BONO,'Bono'),
+    (CENTRAL,'Central'),
+    (EASTERN,'Eastern'),
+    (GREATER,'Greater Accra'),
+    (NORTHEAST,'Northen East'),
+    (NORTHERN,'Northen'),
+    (OTI,'Oti'),
+    (SAVANNAH,'Savannah'),
+    (UPPEREAST,'Upper East'),
+    (UPPERWEST,'Upper West'),
+    (VOLTA,'Volta'),
+    (WESTERNNORTH,'Western North'),
+    (WESTERN,'Western'),
+    )
 
 
 
@@ -513,7 +517,7 @@ class Employee(models.Model):
     # PERSONAL DATA
     user = models.ForeignKey(User,on_delete=models.CASCADE,default=1)
     title = models.CharField(_('Title'),max_length=4,default=MR,choices=TITLE,blank=False,null=True)
-    image = models.FileField(_('Profile Image'),upload_to='profiles',default='default.png',blank=True,null=True,help_text='upload image size less than 2.0MB')#work on path username-date/image
+    image = models.ImageField(_('Profile Image'),upload_to='profiles',default='default.png',blank=True,null=True,help_text='upload image size less than 2.0MB')#work on path username-date/image
     firstname = models.CharField(_('Firstname'),max_length=125,null=False,blank=False)
     lastname = models.CharField(_('Lastname'),max_length=125,null=False,blank=False)
     othername = models.CharField(_('Othername (optional)'),max_length=125,null=True,blank=True)
@@ -525,16 +529,22 @@ class Employee(models.Model):
     religion = models.ForeignKey(Religion,verbose_name =_('Religion'),on_delete=models.SET_NULL,null=True,default=None)
     nationality = models.ForeignKey(Nationality,verbose_name =_('Nationality'),on_delete=models.SET_NULL,null=True,default=None)
     hometown = models.CharField(_('Hometown'),max_length=125,null=True,blank=True)
-    # region = models.CharField(_('Region'),help_text='what region of the country(Ghana) are you from ?',max_length=20,default=GREATER,choices=GHANA_REGIONS,blank=False,null=True)
+    region = models.CharField(_('Region'),help_text='what region of the country(Ghana) are you from ?',max_length=20,default=GREATER,choices=GHANA_REGIONS,blank=False,null=True)
     residence = models.CharField(_('Current Residence'),max_length=125,null=False,blank=False)
     address = models.CharField(_('Address'),help_text='address of current residence',max_length=125,null=True,blank=True)
-    
-    education = models.CharField(_('Education'),help_text='highest educational standard ie. your last level of schooling',max_length=20,default=SENIORHIGH,choices=EDUCATIONAL_LEVEL,blank=False,null=True)
+    last_login=models.DateTimeField(blank=True,null=True)
+
+    education = models.CharField(_('Education'),help_text='highest educational standard ie. your last level of schooling',max_length=40,default=SENIORHIGH,choices=EDUCATIONAL_LEVEL,blank=False,null=True)
     lastwork = models.CharField(_('Last Place of Work'),help_text='where was the last place you worked ?',max_length=125,null=True,blank=True)
     position = models.CharField(_('Position Held'),help_text='what position where you in your last place of work ?',max_length=255,null=True,blank=True)
     # ssnitnumber = models.CharField(_('SSNIT Number'),max_length=30,null=True,blank=True)
     # tinnumber = models.CharField(_('TIN'),max_length=15,null=True,blank=True)
 
+    # employee_type = models.CharField(_('Employee Type'),max_length=20)
+    # email_id = models.EmailField(_("Email ID"), max_length=254)
+    # reporting_to = models.ForeignKey(Employee,on_delete=models.SET_NULL)
+
+    reporting_to = models.ForeignKey('self', related_name='subordinates', blank=True, null=True, help_text='Reporting To',on_delete=models.SET_NULL)
 
 
     # COMPANY DATA
@@ -548,7 +558,7 @@ class Employee(models.Model):
     #app related
     is_blocked = models.BooleanField(_('Is Blocked'),help_text='button to toggle employee block and unblock',default=False)
     is_deleted = models.BooleanField(_('Is Deleted'),help_text='button to toggle employee deleted and undelete',default=False)
- 
+
     created = models.DateTimeField(verbose_name=_('Created'),auto_now_add=True,null=True)
     updated = models.DateTimeField(verbose_name=_('Updated'),auto_now=True,null=True)
 
@@ -556,8 +566,8 @@ class Employee(models.Model):
     #PLUG MANAGERS
     objects = EmployeeManager()
 
-    
-    
+
+
     class Meta:
         verbose_name = _('Employee')
         verbose_name_plural = _('Employees')
@@ -568,7 +578,7 @@ class Employee(models.Model):
     def __str__(self):
         return self.get_full_name
 
-    
+
 
     @property
     def get_full_name(self):
@@ -658,7 +668,7 @@ class Employee(models.Model):
 
     def save(self,*args,**kwargs):
         '''
-        overriding the save method - for every instance that calls the save method 
+        overriding the save method - for every instance that calls the save method
         perform this action on its employee_id
         added : March, 03 2019 - 11:08 PM
 
@@ -670,10 +680,12 @@ class Employee(models.Model):
         # print(self.employeeid)
 
 
+class MailingGroup(models.Model):
+    group_name = models.CharField(_('Group Name'),max_length=30,blank=False,null=False)
 
+    group_mail = models.EmailField(_('Email'),max_length=255,default=None,)
 
+    is_active = models.BooleanField(_("Is Active"),default=False)
 
-
-
-
-
+    def __str__(self):
+        return self.group_name
