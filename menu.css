@@ -1,0 +1,118 @@
+body{
+    margin: 0;
+    padding: 0;
+    background-color: #242277;
+    background-size: cover;
+    background-position: center;
+    font-family: sans-serif;
+}
+/* section div{
+    float: right;
+    margin-right: 20px;
+} */
+ 
+
+
+
+
+.login-box{
+    width: 320px;
+    height: 470px;
+    background: white;/*rgba(70, 68, 68, 0.5)*/
+    color: rgb(71, 68, 68);
+    top: 40%;
+    left: 50%;
+    position: relative;
+    transform: translate(-50%,-50%);
+    box-sizing: border-box;
+    padding: 70px 30px;
+    margin-top:50px;
+    box-shadow: 0px 2px 8px 0px rgb(187, 187, 187);
+}
+.avatar{
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    position: absolute;
+    top: -50px;
+    left: calc(50% - 50px);
+}
+h1{
+    margin: 0;
+    padding: 0 0 20px;
+    text-align: center;
+    font-size: 22px;
+}
+
+.info{
+    color:#4b4fe2;
+    margin-right: 16px;
+}
+.main-container p{
+    margin-top: 5px;
+}
+.main-container{
+    padding: 20px;
+}
+
+/* .details-bar{
+   text-align: center;
+} */
+.title{
+    text-align: center;
+}
+body {
+    font-family: "Lato", sans-serif;
+    background-color: #ECF4FD;
+  }
+  
+  nav{
+    background-color:#ECF4FD;
+  }
+  .sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color:white;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+  }
+  .sidenav header{
+    font-size: 22px;
+    color: black;
+    text-align: center;
+    line-height: 70px;
+    background:  #ECF4FD;
+    user-select: none;
+}
+  .sidenav a {
+    padding: 8px 8px 8px 32px;
+    display:block;
+    text-decoration: none;
+    font-size: 25px;
+    color: #818181;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .sidenav a:hover {
+    color:rgb(178, 178, 224);
+  }
+  
+  .sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+  }
+  
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+ 
