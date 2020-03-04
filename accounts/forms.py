@@ -1,8 +1,11 @@
 from django.forms import ModelForm
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm,UserChangeForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Leave
+
+from .models import Leave, Employee
+from .models import *
+from django.forms import ModelForm
 import datetime
 
 class createUserForm(UserCreationForm):
@@ -15,12 +18,22 @@ class loginUserForm(UserCreationForm):
         model = User
         fields = ['email','password']
 
+class DateInput(forms.DateInput):
+    input_type = 'date'
+# class setpasswordForm(UserChangeForm):
+#     class Meta:
+#         model=User
+#         fields=['oldpassword','newpassword','confirmpassword']
 
 class LeaveCreationForm(ModelForm):
-	reason = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4, 'cols': 40}))
+	reason = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4, 'cols': 27})) ## 33 previous
 	class Meta:
 		model = Leave
-		fields = ['startdate','enddate','leavetype']
+		fields = ['startdate','enddate','leavetype','reason']
+		widgets = {
+            'startdate': DateInput(),
+			'enddate' : DateInput()
+        }
 
 	def clean_enddate(self):
 		enddate = self.cleaned_data['enddate']
@@ -35,3 +48,13 @@ class LeaveCreationForm(ModelForm):
 
 		return enddate
 
+
+class EmployeeCreateForm(forms.ModelForm):
+	# employeeid = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'please enter 5 characters without RGL or slashes eg. A0025'}))
+	image = forms.ImageField(widget=forms.FileInput(attrs={'onchange':'previewImage(this);'}))
+	class Meta:
+		model = Employee
+		exclude = ['is_blocked','is_deleted','created','updated']
+		widgets = {
+				'bio':forms.Textarea(attrs={'cols':5,'rows':5})
+		}
