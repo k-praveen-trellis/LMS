@@ -204,6 +204,35 @@ def applyleave(request):
                                 user = request.user
                                 instance.user = user
                                 instance.save()
+	#Email functionality------------------------------------------------
+
+            			fname = User.objects.all().get(username=request.user).first_name
+           			lname = User.objects.all().get(username=request.user).last_name
+            			subject = "Leave Application | " + request.POST['leavetype'] + " | " + fname + " " + lname
+            			content = {'fname': fname, 'lname': lname,
+                       		'startdate': request.POST['startdate'], 'enddate': request.POST['enddate'],
+                       		'leavetype': request.POST['leavetype'], 'reason': request.POST['reason']
+                       		}
+            			html_body = get_template('accounts/email.html').render(content)
+            			bod = ""
+            			sent_by = "tejusgowda95@gmail.com"
+            			tl = Employee.objects.select_related().get(id=request.user.id).email
+            			hen=request.POST.get('email')
+            			xtraPerson=str(hen)
+            			group = request.POST.get('groupmail')
+            			groupmail = str(group)
+            			leave_applied_by = request.user.email
+
+            			print("----", request.user)
+            			msg = EmailMultiAlternatives(subject=subject, from_email=sent_by,
+                                         to=[leave_applied_by, tl, xtraPerson, groupmail], body=bod)
+
+            			msg.attach_alternative(html_body, "text/html")
+            			msg.send()
+            			print("Mail sent successfully to")
+            			print(leave_applied_by, tl, xtraPerson, groupmail)
+
+
                                 return redirect('view_my_leave_table')
                             else:
                                 return HttpResponse("YOU ARE ELIGIBLE TO APPLY FOR 5 DAYS LEAVE, ONLY ONCE PER YEAR")
