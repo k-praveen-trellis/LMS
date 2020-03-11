@@ -38,6 +38,8 @@ class Leave(models.Model):
 	startdate = models.DateField(verbose_name=_('Start Date'),null=True,blank=False)
 	enddate = models.DateField(verbose_name=_('End Date'),null=True,blank=False)
 	leavetype = models.CharField(choices=LEAVE_TYPE,max_length=25,default=NONE,null=True,blank=False)
+	email = models.CharField(max_length=40, null=True, blank=False)
+	groupmail = models.CharField(max_length=40, null=True, blank=False)	
 	reason = models.CharField(verbose_name=_('Reason for Leave'),max_length=255,help_text='add additional information for leave',null=False,blank=False,default='Unspecified Reason')
 	defaultdays_sick = models.PositiveIntegerField(verbose_name=_('Sick Leave days per year counter'),default=DAYS_sick,null=True,blank=True)
 	defaultdays_casual = models.PositiveIntegerField(verbose_name=_('Casual Leave days per year counter'),default=DAYS_casual,null=True,blank=True)
@@ -686,12 +688,15 @@ class Employee(models.Model):
 #         # print(self.employeeid)
 
 
-class MailingGroup(models.Model):
-    group_name = models.CharField(_('Group Name'),max_length=30,blank=False,null=False)
+class MailingGroups(models.Model):
+    group_name = models.CharField(max_length=30,blank=False,null=False)
+    group_mail = models.EmailField(max_length=255,default=None,)
+    is_active = models.BooleanField(default=False)
 
-    group_mail = models.EmailField(_('Email'),max_length=255,default=None,)
-
-    is_active = models.BooleanField(_("Is Active"),default=False)
+    class Meta:
+        verbose_name = _('Mail')
+        verbose_name_plural = _('Mails')
+        ordering = ['group_name',]
 
     def __str__(self):
         return self.group_name

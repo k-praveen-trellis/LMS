@@ -30,9 +30,12 @@ class DateInput(forms.DateInput):
 
 class LeaveCreationForm(ModelForm):
 	reason = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4, 'cols': 27})) ## 33 previous
+	# reason = forms.CharField(required=False, widget=forms.Textarea(attrs={'rows': 4, 'cols': 27})) ## 33 previous
+	email = forms.ChoiceField(choices=[(email.email, email) for email in User.objects.all()])
+	groupmail=forms.ChoiceField(choices=[(groupmail.group_mail, groupmail) for groupmail in MailingGroups.objects.all() ])
 	class Meta:
 		model = Leave
-		fields = ['startdate','enddate','leavetype','reason']
+		fields = ['startdate','enddate','leavetype','reason', 'email','groupmail']
 		widgets = {
             'startdate': DateInput(),
 			'enddate' : DateInput()
