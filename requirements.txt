@@ -1,6 +1,7 @@
 asgiref==3.2.3
 Babel==2.8.0
 cffi==1.14.0
+cryptography==3.3.2
 cryptography==3.2
 Django==2.2.13
 cryptography==2.8
