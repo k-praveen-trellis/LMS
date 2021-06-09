@@ -5,7 +5,7 @@ cryptography==3.3.2
 cryptography==3.2
 Django==2.2.13
 cryptography==2.8
-Django==2.2.18
+Django==2.2.22
 django-phonenumber-field==4.0.0
 django-pyodbc-azure==2.1.0.0
 jwt==0.6.1
